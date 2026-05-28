@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enhanced Deal Map", "Enhanced Deal Map\Enhanced Deal Map.csproj", "{307AFB4C-1BAA-48D0-8704-F4D07DCB3DDB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{307AFB4C-1BAA-48D0-8704-F4D07DCB3DDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{307AFB4C-1BAA-48D0-8704-F4D07DCB3DDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{307AFB4C-1BAA-48D0-8704-F4D07DCB3DDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{307AFB4C-1BAA-48D0-8704-F4D07DCB3DDB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <EnableDefaultItems>False</EnableDefaultItems>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>cAlgo</RootNamespace>
+    <AssemblyName>SwingFish Helper</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="cTrader.Automate" Version="1.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="SwingFish Helper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Indicators\vWap  - noDev\vWap  - noDev\vWap  - noDev.csproj">
+      <Project>{BF96DE3E-662D-48A1-A2F4-9367C0079CA8}</Project>
+      <Name>vWap  - noDev</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

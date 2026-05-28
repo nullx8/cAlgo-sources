@@ -1,0 +1,60 @@
+﻿using System;
+using System.Linq;
+using cAlgo.API;
+using cAlgo.API.Indicators;
+using cAlgo.API.Internals;
+using cAlgo.Indicators;
+
+namespace cAlgo
+{
+    [Robot(TimeZone = TimeZones.UTC, AccessRights = AccessRights.None)]
+    public class Fractingalper : Robot
+    {
+        [Parameter(DefaultValue = 5)]
+        public int Period { get; set; }
+
+        private FullFractal _fractals;
+
+        protected override void OnStart()
+        {
+            _fractals = Indicators.GetIndicator<FullFractal>(Period, false, false, false, string.Empty, string.Empty, string.Empty);
+        }
+
+        protected override void OnBar()
+        {
+            var index = MarketSeries.Open.Count - 2;
+            _fractals.Calculate(index);
+
+            var lastHighChange = _fractals.horizontalContinuationLineHigh.LastChange(index);
+            Print(lastHighChange);
+        }
+
+        protected override void OnTick()
+        {
+            // Put your core logic here
+        }
+
+        protected override void OnStop()
+        {
+            // Put your deinitialization logic here
+        }
+    }
+
+    public static class Functions
+    {
+        public static double LastChange(this IndicatorDataSeries series, int index)
+        {
+            var change = 0.0;
+            for (var i = index - 1; i >= 0; i--)
+            {
+                if (series[i] != series[index])
+                {
+                    change = series[index] - series[i];
+                    break;
+                }
+            }
+
+            return change;
+        }
+    }
+}

@@ -1,0 +1,99 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using cAlgo.API;
+using cAlgo.API.Internals;
+
+namespace cAlgo
+{
+    [Indicator(IsOverlay = true, TimeZone = TimeZones.UTC, AccessRights = AccessRights.None)]
+    public class VolumeWeightedAveragePrice : Indicator
+    {
+        [Parameter("Data Series", Group = "Parameters", DefaultValue = "Minute")]
+        public TimeFrame CustomTimeFrame { get; set; }
+
+        [Parameter("Reset Period", Group = "Parameters", DefaultValue = VWAP.PeriodType.Daily)]
+        public VWAP.PeriodType Type { get; set; }
+
+        [Parameter("Line Color", Group = "Visuals", DefaultValue = "#00FF00")]
+        public string LineColor { get; set; }
+
+        [Parameter("Line Style", Group = "Visuals")]
+        public LineStyle LineStyle { get; set; }
+
+        [Parameter("Line Thickness", Group = "Visuals", DefaultValue = 1, MinValue = 1)]
+        public int LineThickness { get; set; }
+
+        [Output("Main", PlotType = (PlotType)4)]
+        public IndicatorDataSeries Result { get; set; }
+
+        private MarketSeries _series;
+        private VWAP _vwap;
+        private Color _lineColor;
+
+        private Dictionary<int, ChartTrendLine> _output = new Dictionary<int, ChartTrendLine>();
+        //private ChartHorizontalLine _labelLine;
+
+        protected override void Initialize()
+        {
+            _series = TimeFrame == CustomTimeFrame ? MarketSeries : MarketData.GetSeries(CustomTimeFrame);
+            _vwap = Indicators.GetIndicator<VWAP>(_series, Type);
+            _lineColor = Color.FromHex(LineColor);
+            //_labelLine = Chart.DrawHorizontalLine("label", Bid, Color.Red, -1);
+            //_labelLine.IsInteractive = true;
+
+            Render();
+
+            Chart.ScrollChanged += args => Render();
+            //Chart.ObjectHoverChanged += args =>
+            //{
+            //    if (args.ChartObject != _labelLine)
+            //        return;
+
+            //    _labelLine.IsInteractive = false;
+            //};
+        }
+
+        public override void Calculate(int index)
+        {
+            Result[index] = _vwap.Result[_series.OpenTime.GetIndexByTime(MarketSeries.OpenTime[index])];
+        }
+
+        private void Render()
+        {
+            var fromTime = MarketSeries.OpenTime[Chart.FirstVisibleBarIndex];
+            var toTime = MarketSeries.OpenTime[Chart.LastVisibleBarIndex];
+
+            var fromIndex = _series.OpenTime.GetIndexByTime(fromTime);
+            var toIndex = _series.OpenTime.GetIndexByTime(toTime);
+
+            for (var index = fromIndex; index <= toIndex; index++)
+            {
+                var time = new[] { _series.OpenTime[index], _series.OpenTime[index - 1] };
+                var vwap = new[] { _vwap.Result[index], _vwap.IsFirstBarOfSession(index) ? _vwap.Result[index] : _vwap.Result[index - 1] };
+
+                if (time[1] < MarketSeries.OpenTime[0])
+                    continue;
+
+                if (!_output.ContainsKey(index))
+                {
+                    _output.Add(index, Chart.DrawTrendLine(index.ToString(), time[1], vwap[1], time[0], vwap[0], _lineColor, LineThickness, LineStyle));
+                }
+            }
+
+            foreach (var index in _output.Keys.ToList())
+            {
+                if (fromIndex <= index && index <= toIndex)
+                    continue;
+
+                _output.Remove(index);
+                Chart.RemoveObject(index.ToString());
+            }
+
+            //if (_labelLine != null)
+            //{
+            //    _labelLine.Y = _vwap.Result[toIndex];
+            //}
+        }
+    }
+}
